@@ -48,18 +48,8 @@ def split_sentence_and_return_sentence_vector( doc_id, sentence ):
 
     print sentence_vector
 
-"""
-print model[ "beer" ]
-print model[ "wine" ]
-
-print "beer == wine", word2vec_cosine_similarity( "beer", "beer" )
-print "beer == wine", word2vec_cosine_similarity( "beer", "wine" )
-print "beer == jesus", word2vec_cosine_similarity( "beer", "jesus" )
-print "wine == jesus", word2vec_cosine_similarity( "wine", "jesus" )
-"""
-
-en_file = "en.dog.txt"
-simple_file = "simple.dog.txt" 
+en_file = "data/en.dog.txt"
+simple_file = "data/simple.dog.txt" 
 
 #en_dog_sentences = open_json_file_and_return_sentences( en_file )
 sentences = open_json_file_and_return_sentences( simple_file )
