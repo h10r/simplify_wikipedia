@@ -9,17 +9,17 @@ sentence_detector = nltk.data.load( 'tokenizers/punkt/english.pickle' )
 
 model = word2vec.Word2Vec.load_word2vec_format( '/Users/hendrikheuer/Projects/text_summary_experiments/data/vectors.bin', binary=True )
 
-WORD2VEC_DIM = len( model["computer"] )
+WORD2VEC_DIM = len( model[ "computer" ] )
 
 def cosine_similarity(v1, v2):
-    return np.dot( v1, v2.T ) / np.linalg.norm(v1) / np.linalg.norm(v2)
+    return np.dot( v1, v2.T ) / np.linalg.norm( v1 ) / np.linalg.norm( v2 )
 
 def open_json_file_and_return_sentences( filename ):
     json_data = open( filename )
     data = json.load( json_data )
     json_data.close()
 
-    data = data["query"]["pages"].values()[0]["revisions"][0]["*"]
+    data = data[ "query" ][ "pages" ].values()[ 0 ][ "revisions" ][ 0 ][ "*" ]
 
     plain_text = dewiki.from_string( data )
     
@@ -63,9 +63,20 @@ def compute_sentence_similiarity_matrix( simple_sentences, english_sentences ):
 
     for i_s in xrange( len_simple ):
         for i_e in xrange( len_english ):
-            similiarity_matrix[i_s][i_e] = cosine_similarity( simple_array[ i_e ], english_array[ i_e ]  )
+            similiarity_matrix[ i_s ][ i_e ] = cosine_similarity( simple_array[ i_s ], english_array[ i_e ]  )
+            
+            if np.isnan( similiarity_matrix[ i_s ][ i_e ] ):
+                similiarity_matrix[ i_s ][ i_e ] = 0.0
 
     return similiarity_matrix
+
+def print_top_n_sentences( similiarity_matrix, N=5 ):
+    len_simple, len_english = similiarity_matrix.shape
+
+    for i_s in xrange( len_simple ):
+        top_idx = np.argpartition( similiarity_matrix[ i_s ], -N )[ -N: ]
+
+        print similiarity_matrix[ i_s ][ top_idx ]
 
 en_file = "data/en.dog.txt"
 simple_file = "data/simple.dog.txt" 
@@ -78,4 +89,4 @@ en_sentence_vectors = calculate_sentence_vectors( en_sentences )
 
 similarity_matrix = compute_sentence_similiarity_matrix( simple_sentence_vectors, en_sentence_vectors )
 
-print similarity_matrix
+print_top_n_sentences( similarity_matrix )
