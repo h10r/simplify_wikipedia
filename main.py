@@ -47,8 +47,8 @@ def split_sentence_and_return_sentence_vector( sentence ):
 def calculate_sentence_vectors( sentences ):
     sentences_lookup = {}
 
-    for s in sentences[0:20]:
-        sentences_lookup[ hash( s ) ] = split_sentence_and_return_sentence_vector( s )
+    for s in xrange( len( sentences[0:20] ) ):
+        sentences_lookup[ sentences[ s ] ] = split_sentence_and_return_sentence_vector( sentences[ s ] )
 
     return sentences_lookup
 
@@ -70,13 +70,22 @@ def compute_sentence_similiarity_matrix( simple_sentences, english_sentences ):
 
     return similiarity_matrix
 
-def print_top_n_sentences( similiarity_matrix, N=5 ):
+def print_top_n_sentences( similiarity_matrix, simple_sentences, english_sentences, N=5 ):
     len_simple, len_english = similiarity_matrix.shape
+
+    simple_sentences = simple_sentences.keys()
+    english_sentences = english_sentences.keys()
 
     for i_s in xrange( len_simple ):
         top_idx = np.argpartition( similiarity_matrix[ i_s ], -N )[ -N: ]
 
-        print similiarity_matrix[ i_s ][ top_idx ]
+        print "**",simple_sentences[ i_s ]
+
+        for idx in top_idx:
+            print "==", english_sentences[ idx ]
+
+        #print similiarity_matrix[ i_s ][ top_idx ]
+        print "=" * 100
 
 en_file = "data/en.dog.txt"
 simple_file = "data/simple.dog.txt" 
@@ -89,4 +98,4 @@ en_sentence_vectors = calculate_sentence_vectors( en_sentences )
 
 similarity_matrix = compute_sentence_similiarity_matrix( simple_sentence_vectors, en_sentence_vectors )
 
-print_top_n_sentences( similarity_matrix )
+print_top_n_sentences( similarity_matrix, simple_sentence_vectors, en_sentence_vectors )
